@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f6f5f0">
+    <title>Make a prediction | Classmark</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a class="brand" href="{{ url_for('index') }}" aria-label="Classmark home">
+                <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+                <span>classmark</span>
+            </a>
+            <nav class="site-nav" aria-label="Main navigation">
+                <a class="nav-link" href="{{ url_for('index') }}">Overview</a>
+                <span class="nav-current">Prediction workspace</span>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container prediction-page">
+        <div class="page-intro">
+            <a class="back-link" href="{{ url_for('index') }}"><span aria-hidden="true">←</span> Back to overview</a>
+            <p class="eyebrow"><span class="eyebrow-dot"></span> PREDICTION WORKSPACE</p>
+            <h1>A few details.<br><span>A useful estimate.</span></h1>
+            <p>Share a little context and two recent scores to explore an estimated math score.</p>
+        </div>
+
+        <form class="prediction-form" action="{{ url_for('predict_datapoint') }}" method="post">
+            <div class="form-heading">
+                <div>
+                    <p class="card-eyebrow">STUDENT SNAPSHOT</p>
+                    <h2>Tell us a little more</h2>
+                </div>
+                <span class="required-note"><span aria-hidden="true">*</span> Required fields</span>
+            </div>
+
+            <fieldset class="form-section">
+                <legend>Student profile</legend>
+                <div class="field-grid">
+                    <div class="field">
+                        <label for="gender">Gender <span aria-hidden="true">*</span></label>
+                        <select id="gender" name="gender" required>
+                            <option value="" selected disabled>Select gender</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label for="race_ethnicity">Race or ethnicity <span aria-hidden="true">*</span></label>
+                        <select id="race_ethnicity" name="race_ethnicity" required>
+                            <option value="" selected disabled>Select a group</option>
+                            <option value="group A">Group A</option>
+                            <option value="group B">Group B</option>
+                            <option value="group C">Group C</option>
+                            <option value="group D">Group D</option>
+                            <option value="group E">Group E</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label for="parental_level_of_education">Parent or guardian education <span aria-hidden="true">*</span></label>
+                        <select id="parental_level_of_education" name="parental_level_of_education" required>
+                            <option value="" selected disabled>Select education level</option>
+                            <option value="associate's degree">Associate's degree</option>
+                            <option value="bachelor's degree">Bachelor's degree</option>
+                            <option value="high school">High school</option>
+                            <option value="master's degree">Master's degree</option>
+                            <option value="some college">Some college</option>
+                            <option value="some high school">Some high school</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label for="lunch">Lunch type <span aria-hidden="true">*</span></label>
+                        <select id="lunch" name="lunch" required>
+                            <option value="" selected disabled>Select lunch type</option>
+                            <option value="free/reduced">Free or reduced</option>
+                            <option value="standard">Standard</option>
+                        </select>
+                    </div>
+                    <div class="field field-wide">
+                        <label for="test_preparation_course">Test preparation course <span aria-hidden="true">*</span></label>
+                        <select id="test_preparation_course" name="test_preparation_course" required>
+                            <option value="" selected disabled>Select course status</option>
+                            <option value="none">None</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset class="form-section score-section">
+                <legend>Recent scores</legend>
+                <p class="section-hint">Enter each score from 0 to 100.</p>
+                <div class="field-grid score-grid">
+                    <div class="field">
+                        <label for="reading_score">Reading score <span aria-hidden="true">*</span></label>
+                        <div class="input-with-suffix">
+                            <input id="reading_score" name="reading_score" type="number" min="0" max="100" step="1" placeholder="e.g. 78" required>
+                            <span>/ 100</span>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label for="writing_score">Writing score <span aria-hidden="true">*</span></label>
+                        <div class="input-with-suffix">
+                            <input id="writing_score" name="writing_score" type="number" min="0" max="100" step="1" placeholder="e.g. 84" required>
+                            <span>/ 100</span>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+
+            <div class="form-submit">
+                <p>Your details are used to generate this estimate.</p>
+                <button class="button" type="submit">Estimate math score <span aria-hidden="true">→</span></button>
+            </div>
+        </form>
+
+        {% if results is defined %}
+        <section class="result-card" aria-live="polite">
+            <div>
+                <p class="card-eyebrow">YOUR ESTIMATE</p>
+                <h2>Estimated math score</h2>
+                <p>A model-generated estimate based on the details you shared.</p>
+            </div>
+            <output class="result-score">{{ "%.1f"|format(results|float) }}<span>/ 100</span></output>
+        </section>
+        {% endif %}
+
+        <p class="disclaimer"><span aria-hidden="true">i</span> This estimate is for informational purposes and is not a measure of a student’s ability or potential.</p>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container footer-inner">
+            <a class="brand brand-footer" href="{{ url_for('index') }}">
+                <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+                <span>classmark</span>
+            </a>
+            <p>A considered look at student performance.</p>
+        </div>
+    </footer>
+</body>
+</html>
